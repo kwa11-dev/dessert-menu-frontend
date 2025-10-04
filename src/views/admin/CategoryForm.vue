@@ -7,7 +7,9 @@ import { getCategory, createCategory, updateCategory } from '@/api/category'
 
 const baseURL = import.meta.env.VITE_API_BASE_URL.replace('/api', '')
 const getCategoryImage = (img) =>
-    img ? `${baseURL}/storage/${img}` : `${baseURL}/storage/default.png`
+  img
+    ? `${baseURL}/storage/images/categories/${img}`
+    : `${baseURL}/storage/images/categories/default.png`
 
 const toast = useToast()
 const route = useRoute()
@@ -23,23 +25,26 @@ const fileInput = ref(null)
 
 const category = ref({
   name: '',
-  image: null
+  image: null,
 })
 
 const currentImageUrl = ref('')
 const selectedImageFile = ref(null)
-console.log(route.params);
+console.log(route.params)
 const isEdit = computed(() => route?.params?.id !== undefined)
-const pageTitle = computed(() => isEdit.value ? 'Edit Category' : 'Create New Category')
+const pageTitle = computed(() => (isEdit.value ? 'Edit Category' : 'Create New Category'))
 
 // Watch for image changes to update preview
-watch(() => category.value.image, (newImage) => {
-  if (newImage) {
-    currentImageUrl.value = getCategoryImage(newImage)
-  } else {
-    currentImageUrl.value = getCategoryImage('default.png')
-  }
-})
+watch(
+  () => category.value.image,
+  (newImage) => {
+    if (newImage) {
+      currentImageUrl.value = getCategoryImage(newImage)
+    } else {
+      currentImageUrl.value = getCategoryImage('default.png')
+    }
+  },
+)
 
 onMounted(async () => {
   if (isEdit.value) {
@@ -64,7 +69,7 @@ const loadCategory = async () => {
       severity: 'error',
       summary: 'Error',
       detail: 'Failed to load category',
-      life: 3000
+      life: 3000,
     })
     router.push('/admin/categories')
   } finally {
@@ -89,7 +94,7 @@ const handleFileSelect = async (event) => {
 const handleDrop = (event) => {
   event.preventDefault()
   isDragOver.value = false
-  
+
   const files = event.dataTransfer.files
   if (files.length > 0) {
     const file = files[0]
@@ -151,16 +156,15 @@ const processImageFile = async (file) => {
       severity: 'success',
       summary: 'Success',
       detail: 'Image selected successfully',
-      life: 2000
+      life: 2000,
     })
-
   } catch (error) {
     imageError.value = 'Failed to process image. Please try again.'
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: 'Failed to process image',
-      life: 3000
+      life: 3000,
     })
   } finally {
     uploadingImage.value = false
@@ -182,7 +186,7 @@ const removeImage = async () => {
     severity: 'success',
     summary: 'Success',
     detail: 'Image removed',
-    life: 2000
+    life: 2000,
   })
 }
 
@@ -192,23 +196,23 @@ const submitForm = async () => {
       severity: 'warn',
       summary: 'Validation Error',
       detail: 'Category name is required',
-      life: 3000
+      life: 3000,
     })
     return
   }
 
   submitting.value = true
-  
+
   try {
     // Create FormData for the request
     const formData = new FormData()
-    
+
     // Append category data
     formData.append('name', category.value.name)
-    
+
     // Append image if selected
-    if(isEdit){
-      formData.append('id',category.value.id);
+    if (isEdit) {
+      formData.append('id', category.value.id)
     }
     if (selectedImageFile.value) {
       formData.append('image', selectedImageFile.value)
@@ -220,26 +224,26 @@ const submitForm = async () => {
     if (isEdit.value) {
       await updateCategory(formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
       toast.add({
         severity: 'success',
         summary: 'Success',
         detail: 'Category updated successfully',
-        life: 3000
+        life: 3000,
       })
     } else {
       await createCategory(formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
       toast.add({
         severity: 'success',
         summary: 'Success',
         detail: 'Category created successfully',
-        life: 3000
+        life: 3000,
       })
     }
     router.push('/admin/categories')
@@ -248,7 +252,7 @@ const submitForm = async () => {
       severity: 'error',
       summary: 'Error',
       detail: `Failed to ${isEdit.value ? 'update' : 'create'} category`,
-      life: 3000
+      life: 3000,
     })
   } finally {
     submitting.value = false
@@ -280,15 +284,16 @@ const cancel = () => {
           <div class="title-text">
             <h2 class="page-title">{{ pageTitle }}</h2>
             <p class="page-subtitle">
-              {{ isEdit ? 'Update category information' : 'Create a new category to organize your menu' }}
+              {{
+                isEdit
+                  ? 'Update category information'
+                  : 'Create a new category to organize your menu'
+              }}
             </p>
           </div>
         </div>
-        
-        <button 
-          @click="cancel"
-          class="back-btn"
-        >
+
+        <button @click="cancel" class="back-btn">
           <div class="btn-content">
             <i class="pi pi-arrow-left"></i>
             <span>Back to Categories</span>
@@ -296,7 +301,7 @@ const cancel = () => {
           <div class="btn-glow"></div>
         </button>
       </div>
-      
+
       <div class="header-decoration">
         <div class="decoration-line"></div>
         <div class="decoration-dots">
@@ -335,7 +340,12 @@ const cancel = () => {
         </div>
 
         <!-- Form -->
-        <form v-else @submit.prevent="submitForm" class="form-container" enctype="multipart/form-data">
+        <form
+          v-else
+          @submit.prevent="submitForm"
+          class="form-container"
+          enctype="multipart/form-data"
+        >
           <!-- Name Field -->
           <div class="form-field">
             <label for="name" class="field-label">
@@ -360,9 +370,7 @@ const cancel = () => {
               <div class="input-focus-border"></div>
             </div>
             <div class="field-meta">
-              <div class="char-count">
-                {{ category.name.length }}/50 characters
-              </div>
+              <div class="char-count">{{ category.name.length }}/50 characters</div>
               <div class="field-hint" v-if="!category.name">
                 <i class="pi pi-exclamation-circle"></i>
                 <span>Category name is required</span>
@@ -379,9 +387,9 @@ const cancel = () => {
             <div class="image-upload-container">
               <!-- Current Image Preview -->
               <div v-if="currentImageUrl" class="current-image-preview">
-                <img 
-                  :src="currentImageUrl" 
-                  alt="Current category image" 
+                <img
+                  :src="currentImageUrl"
+                  alt="Current category image"
                   class="image-preview"
                   :class="{ 'default-image': !category.image && !selectedImageFile }"
                 />
@@ -396,12 +404,12 @@ const cancel = () => {
               </div>
 
               <!-- Upload Area -->
-              <div 
+              <div
                 class="upload-area"
-                :class="{ 
+                :class="{
                   'upload-area-dragover': isDragOver,
                   'upload-area-has-image': category.image || selectedImageFile,
-                  'upload-area-uploading': uploadingImage
+                  'upload-area-uploading': uploadingImage,
                 }"
                 @click="triggerFileInput"
                 @drop="handleDrop"
@@ -439,10 +447,7 @@ const cancel = () => {
               <!-- Upload Progress -->
               <div v-if="uploadProgress > 0 && uploadingImage" class="upload-progress">
                 <div class="progress-bar-container">
-                  <div 
-                    class="progress-bar-fill" 
-                    :style="{ width: uploadProgress + '%' }"
-                  ></div>
+                  <div class="progress-bar-fill" :style="{ width: uploadProgress + '%' }"></div>
                 </div>
                 <span class="progress-text">{{ uploadProgress }}%</span>
               </div>
@@ -454,8 +459,6 @@ const cancel = () => {
               </div>
             </div>
           </div>
-
-
 
           <!-- Quick Tips -->
           <div class="tips-card">
@@ -485,19 +488,15 @@ const cancel = () => {
 
           <!-- Form Actions -->
           <div class="form-actions">
-            <button 
-              type="button" 
-              @click="cancel"
-              class="action-btn cancel-btn"
-            >
+            <button type="button" @click="cancel" class="action-btn cancel-btn">
               <i class="pi pi-times"></i>
               <span>Cancel</span>
             </button>
-            <button 
+            <button
               type="submit"
               :disabled="submitting || !category.name"
               class="action-btn submit-btn"
-              :class="{ 'loading': submitting, 'pulse-animation': !category.name }"
+              :class="{ loading: submitting, 'pulse-animation': !category.name }"
             >
               <div class="btn-spinner" v-if="submitting"></div>
               <i class="pi" :class="isEdit ? 'pi-check' : 'pi-plus'" v-else></i>
@@ -512,7 +511,10 @@ const cancel = () => {
       <div class="card-footer">
         <div class="footer-content">
           <i class="pi pi-info-circle"></i>
-          <span>Categories help organize your menu and improve customer experience. Adding images makes them more appealing.</span>
+          <span
+            >Categories help organize your menu and improve customer experience. Adding images makes
+            them more appealing.</span
+          >
         </div>
       </div>
     </div>
@@ -588,7 +590,8 @@ const cancel = () => {
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg) scale(1);
   }
   25% {
@@ -754,7 +757,8 @@ const cancel = () => {
 }
 
 @keyframes dot-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
     transform: scale(0.8);
   }
@@ -853,8 +857,12 @@ const cancel = () => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-state p {
@@ -877,11 +885,17 @@ const cancel = () => {
   animation: loading-bounce 1.4s infinite ease-in-out;
 }
 
-.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
-.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+.loading-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+.loading-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
 
 @keyframes loading-bounce {
-  0%, 80%, 100% {
+  0%,
+  80%,
+  100% {
     transform: scale(0.8);
     opacity: 0.5;
   }
@@ -1219,7 +1233,8 @@ const cancel = () => {
 }
 
 @keyframes pulse-gentle {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
   }
   50% {
@@ -1320,7 +1335,9 @@ const cancel = () => {
   stroke: #f59e0b;
   stroke-miterlimit: 10;
   box-shadow: inset 0 0 0 #f59e0b;
-  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+  animation:
+    fill 0.4s ease-in-out 0.4s forwards,
+    scale 0.3s ease-in-out 0.9s both;
   position: relative;
 }
 
@@ -1348,7 +1365,8 @@ const cancel = () => {
 }
 
 @keyframes scale {
-  0%, 100% {
+  0%,
+  100% {
     transform: none;
   }
   50% {
@@ -1376,19 +1394,19 @@ const cancel = () => {
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .action-btn {
     justify-content: center;
   }
-  
+
   .card-content {
     padding: 20px;
   }
-  
+
   .input-container {
     max-width: 100%;
   }
@@ -1398,19 +1416,19 @@ const cancel = () => {
   .page-header {
     padding: 20px;
   }
-  
+
   .title-section {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  
+
   .preview-category {
     flex-direction: column;
     align-items: flex-start;
     text-align: center;
   }
-  
+
   .preview-icon {
     align-self: center;
   }
@@ -1586,8 +1604,12 @@ const cancel = () => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive adjustments */
@@ -1596,12 +1618,12 @@ const cancel = () => {
     width: 100px;
     height: 100px;
   }
-  
+
   .upload-area {
     padding: 1.5rem;
     min-height: 120px;
   }
-  
+
   .upload-icon {
     font-size: 1.5rem;
   }
