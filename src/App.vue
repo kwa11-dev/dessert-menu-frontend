@@ -9,6 +9,7 @@ import { onMounted } from 'vue'
 
 onMounted(() => {
   document.title = 'Pate Cream - Menu'
+})
 </script>
 
 <style>

@@ -812,7 +812,7 @@ const getPriceDisplay = (item) => {
 
 @media (max-width: 576px) {
   .items-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
 
