@@ -14,11 +14,11 @@ const routes = [
     path: '/admin/login',
     name: 'admin-login',
     component: AdminLogin,
-    meta: { requiresAuth: true },
   },
   {
     path: '/admin',
     component: () => import('@/views/admin/AdminLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       {
         path: 'items',
