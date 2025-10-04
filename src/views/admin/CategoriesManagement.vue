@@ -6,9 +6,7 @@ import { useToast } from 'primevue/usetoast'
 import { getCategories, deleteCategory } from '@/api/category'
 const baseURL = import.meta.env.VITE_API_BASE_URL.replace('/api', '')
 const getCategoryImage = (img) =>
-  img
-    ? `${baseURL}/storage/images/categories${img}`
-    : `${baseURL}/storage/images/categories/default.png`
+  img ? `${baseURL}/storage/${img}` : `${baseURL}/storage/images/categories/default.png`
 const toast = useToast()
 const router = useRouter()
 

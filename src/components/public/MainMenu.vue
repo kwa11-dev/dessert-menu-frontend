@@ -49,12 +49,10 @@ const filteredItems = computed(() => {
 })
 
 const getCategoryImage = (img) =>
-  img
-    ? `${baseURL}/storage/images/categories/${img}`
-    : `${baseURL}/storage/images/categories/default.png`
+  img ? `${baseURL}/storage/${img}` : `${baseURL}/storage/images/categories/default.png`
 
 const getItemImage = (img) =>
-  img ? `${baseURL}/storage/images/items/${img}` : `${baseURL}/storage/images/items/default.png`
+  img ? `${baseURL}/storage/${img}` : `${baseURL}/storage/images/items/default.png`
 
 const onImageError = (event) => {
   event.target.src = `${baseURL}/storage/images/items/default.png`
@@ -111,13 +109,29 @@ const handleShare = () => {
         })
       })
       .catch(console.error)
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    // Clipboard API available
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Link copied to clipboard!',
+        life: 3000,
+      })
+    })
   } else {
-    // Fallback - copy link to clipboard
-    navigator.clipboard.writeText(window.location.href)
+    // Fallback for insecure contexts (HTTP)
+    const input = document.createElement('input')
+    input.value = window.location.href
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    document.body.removeChild(input)
+
     toast.add({
       severity: 'success',
       summary: 'Success',
-      detail: 'Thanks for sharing!',
+      detail: 'Link copied to clipboard!',
       life: 3000,
     })
   }
@@ -322,7 +336,7 @@ const getPriceDisplay = (item) => {
 
 .category-card {
   background-color: #4ba8a7;
-  border-radius: 30%;
+  border-radius: 20%;
   width: 115px;
   height: 138px;
   display: flex;
@@ -431,7 +445,7 @@ const getPriceDisplay = (item) => {
   width: 100%;
   padding: 12px 45px 12px 40px;
   border: 2px solid #4ba8a7;
-  border-radius: 25px;
+  border-radius: 10px;
   font-size: 1rem;
   background-color: white;
   transition: all 0.3s ease;
@@ -471,7 +485,7 @@ const getPriceDisplay = (item) => {
   background-color: #053a39;
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: 20%;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;

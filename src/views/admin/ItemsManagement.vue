@@ -7,7 +7,7 @@ import { getItems, deleteItem } from '@/api/item'
 import { getCategories } from '@/api/category'
 const baseURL = import.meta.env.VITE_API_BASE_URL.replace('/api', '')
 const getItemImage = (img) =>
-  img ? `${baseURL}/storage/images/items${img}` : `${baseURL}/storage/images/items/default.png`
+  img ? `${baseURL}/storage/${img}` : `${baseURL}/storage/images/items/default.png`
 const toast = useToast()
 const router = useRouter()
 
