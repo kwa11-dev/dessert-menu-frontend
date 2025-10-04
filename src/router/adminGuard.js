@@ -1,8 +1,8 @@
-export function adminGuard(to, from, next) {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    next("/admin/login");
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('admin_token')
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/admin/login')
   } else {
-    next();
+    next()
   }
-}
+})
