@@ -8,7 +8,7 @@ import { getCategories } from '@/api/category'
 
 const baseURL = import.meta.env.VITE_API_BASE_URL.replace('/api', '')
 const getItemImage = (img) =>
-    img ? `${baseURL}/storage/${img}` : `${baseURL}/storage/default.png`
+  img ? `${baseURL}/storage/images/items${img}` : `${baseURL}/storage/images/items/default.png`
 
 const toast = useToast()
 const route = useRoute()
@@ -29,7 +29,7 @@ const item = ref({
   is_sale: false,
   sale_price: 0,
   description: '',
-  image: null // Changed to null for file upload
+  image: null, // Changed to null for file upload
 })
 
 const categories = ref([])
@@ -37,16 +37,19 @@ const currentImageUrl = ref('')
 const selectedImageFile = ref(null)
 
 const isEdit = computed(() => route.params.id !== undefined)
-const pageTitle = computed(() => isEdit.value ? 'Edit Item' : 'Create New Item')
+const pageTitle = computed(() => (isEdit.value ? 'Edit Item' : 'Create New Item'))
 
 // Watch for image changes to update preview
-watch(() => item.value.image, (newImage) => {
-  if (newImage) {
-    currentImageUrl.value = getItemImage(newImage)
-  } else {
-    currentImageUrl.value = getItemImage('default.png')
-  }
-})
+watch(
+  () => item.value.image,
+  (newImage) => {
+    if (newImage) {
+      currentImageUrl.value = getItemImage(newImage)
+    } else {
+      currentImageUrl.value = getItemImage('default.png')
+    }
+  },
+)
 
 onMounted(async () => {
   await loadCategories()
@@ -72,7 +75,7 @@ const loadItem = async () => {
       severity: 'error',
       summary: 'Error',
       detail: 'Failed to load item',
-      life: 3000
+      life: 3000,
     })
     router.push('/admin/items')
   } finally {
@@ -89,7 +92,7 @@ const loadCategories = async () => {
       severity: 'error',
       summary: 'Error',
       detail: 'Failed to load categories',
-      life: 3000
+      life: 3000,
     })
   }
 }
@@ -111,7 +114,7 @@ const handleFileSelect = async (event) => {
 const handleDrop = (event) => {
   event.preventDefault()
   isDragOver.value = false
-  
+
   const files = event.dataTransfer.files
   if (files.length > 0) {
     const file = files[0]
@@ -173,16 +176,15 @@ const processImageFile = async (file) => {
       severity: 'success',
       summary: 'Success',
       detail: 'Image selected successfully',
-      life: 2000
+      life: 2000,
     })
-
   } catch (error) {
     imageError.value = 'Failed to process image. Please try again.'
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: 'Failed to process image',
-      life: 3000
+      life: 3000,
     })
   } finally {
     uploadingImage.value = false
@@ -204,19 +206,19 @@ const removeImage = async () => {
     severity: 'success',
     summary: 'Success',
     detail: 'Image removed',
-    life: 2000
+    life: 2000,
   })
 }
 
 const submitForm = async () => {
   submitting.value = true
-  
+
   try {
     // Create FormData for the request
     const formData = new FormData()
-    
+
     // Append all item data
-    if(isEdit){
+    if (isEdit) {
       formData.append('id', item.value.id)
     }
     formData.append('name', item.value.name)
@@ -225,7 +227,7 @@ const submitForm = async () => {
     formData.append('is_sale', item.value.is_sale ? '1' : '0')
     formData.append('sale_price', item.value.sale_price || '')
     formData.append('description', item.value.description || '')
-    
+
     // Append image if selected
     if (selectedImageFile.value) {
       formData.append('image', selectedImageFile.value)
@@ -235,29 +237,29 @@ const submitForm = async () => {
     }
 
     if (isEdit.value) {
-      console.log(Object.fromEntries(formData));
+      console.log(Object.fromEntries(formData))
       await updateItem(formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
       toast.add({
         severity: 'success',
         summary: 'Success',
         detail: 'Item updated successfully',
-        life: 3000
+        life: 3000,
       })
     } else {
       await createItem(formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
       toast.add({
         severity: 'success',
         summary: 'Success',
         detail: 'Item created successfully',
-        life: 3000
+        life: 3000,
       })
     }
     router.push('/admin/items')
@@ -266,7 +268,7 @@ const submitForm = async () => {
       severity: 'error',
       summary: 'Error',
       detail: `Failed to ${isEdit.value ? 'update' : 'create'} item`,
-      life: 3000
+      life: 3000,
     })
   } finally {
     submitting.value = false
@@ -301,11 +303,8 @@ const cancel = () => {
             </p>
           </div>
         </div>
-        
-        <button 
-          @click="cancel"
-          class="back-btn"
-        >
+
+        <button @click="cancel" class="back-btn">
           <div class="btn-content">
             <i class="pi pi-arrow-left"></i>
             <span>Back to Items</span>
@@ -313,7 +312,7 @@ const cancel = () => {
           <div class="btn-glow"></div>
         </button>
       </div>
-      
+
       <div class="header-decoration">
         <div class="decoration-line"></div>
       </div>
@@ -342,7 +341,12 @@ const cancel = () => {
         </div>
 
         <!-- Form -->
-        <form v-else @submit.prevent="submitForm" class="form-container" enctype="multipart/form-data">
+        <form
+          v-else
+          @submit.prevent="submitForm"
+          class="form-container"
+          enctype="multipart/form-data"
+        >
           <div class="form-grid">
             <!-- Name Field -->
             <div class="form-field">
@@ -389,11 +393,7 @@ const cancel = () => {
                   :class="{ 'input-error': !item.category_id }"
                 >
                   <option value="" disabled>Select a category</option>
-                  <option 
-                    v-for="category in categories" 
-                    :key="category.id" 
-                    :value="category.id"
-                  >
+                  <option v-for="category in categories" :key="category.id" :value="category.id">
                     {{ category.name }}
                   </option>
                 </select>
@@ -476,9 +476,9 @@ const cancel = () => {
             <div class="image-upload-container">
               <!-- Current Image Preview -->
               <div v-if="currentImageUrl" class="current-image-preview">
-                <img 
-                  :src="currentImageUrl" 
-                  alt="Current item image" 
+                <img
+                  :src="currentImageUrl"
+                  alt="Current item image"
                   class="image-preview"
                   :class="{ 'default-image': !item.image && !selectedImageFile }"
                 />
@@ -493,12 +493,12 @@ const cancel = () => {
               </div>
 
               <!-- Upload Area -->
-              <div 
+              <div
                 class="upload-area"
-                :class="{ 
+                :class="{
                   'upload-area-dragover': isDragOver,
                   'upload-area-has-image': item.image || selectedImageFile,
-                  'upload-area-uploading': uploadingImage
+                  'upload-area-uploading': uploadingImage,
                 }"
                 @click="triggerFileInput"
                 @drop="handleDrop"
@@ -536,10 +536,7 @@ const cancel = () => {
               <!-- Upload Progress -->
               <div v-if="uploadProgress > 0 && uploadingImage" class="upload-progress">
                 <div class="progress-bar-container">
-                  <div 
-                    class="progress-bar-fill" 
-                    :style="{ width: uploadProgress + '%' }"
-                  ></div>
+                  <div class="progress-bar-fill" :style="{ width: uploadProgress + '%' }"></div>
                 </div>
                 <span class="progress-text">{{ uploadProgress }}%</span>
               </div>
@@ -572,9 +569,7 @@ const cancel = () => {
               ></textarea>
               <div class="input-underline"></div>
             </div>
-            <div class="char-count">
-              {{ item.description.length }}/500 characters
-            </div>
+            <div class="char-count">{{ item.description.length }}/500 characters</div>
           </div>
 
           <!-- On Sale Toggle -->
@@ -582,12 +577,7 @@ const cancel = () => {
             <div class="toggle-container">
               <label class="toggle-label">
                 <div class="toggle-switch">
-                  <input
-                    id="is_sale"
-                    v-model="item.is_sale"
-                    type="checkbox"
-                    class="toggle-input"
-                  />
+                  <input id="is_sale" v-model="item.is_sale" type="checkbox" class="toggle-input" />
                   <span class="toggle-slider"></span>
                 </div>
                 <div class="toggle-content">
@@ -595,7 +585,7 @@ const cancel = () => {
                   <span class="toggle-description">Enable to set a special sale price</span>
                 </div>
               </label>
-              <div class="sale-badge" :class="{ 'active': item.is_sale }">
+              <div class="sale-badge" :class="{ active: item.is_sale }">
                 {{ item.is_sale ? 'SALE ACTIVE' : 'REGULAR PRICE' }}
               </div>
             </div>
@@ -619,19 +609,21 @@ const cancel = () => {
 
           <!-- Form Actions -->
           <div class="form-actions">
-            <button 
-              type="button" 
-              @click="cancel"
-              class="action-btn cancel-btn"
-            >
+            <button type="button" @click="cancel" class="action-btn cancel-btn">
               <i class="pi pi-times"></i>
               <span>Cancel</span>
             </button>
-            <button 
+            <button
               type="submit"
-              :disabled="submitting || !item.name || !item.category_id || item.price === null || item.price < 0"
+              :disabled="
+                submitting ||
+                !item.name ||
+                !item.category_id ||
+                item.price === null ||
+                item.price < 0
+              "
               class="action-btn submit-btn"
-              :class="{ 'loading': submitting }"
+              :class="{ loading: submitting }"
             >
               <div class="btn-spinner" v-if="submitting"></div>
               <i class="pi" :class="isEdit ? 'pi-check' : 'pi-plus'" v-else></i>
@@ -817,8 +809,12 @@ const cancel = () => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive adjustments */
@@ -827,12 +823,12 @@ const cancel = () => {
     width: 100px;
     height: 100px;
   }
-  
+
   .upload-area {
     padding: 1.5rem;
     min-height: 120px;
   }
-  
+
   .upload-icon {
     font-size: 1.5rem;
   }
@@ -886,7 +882,8 @@ const cancel = () => {
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
   33% {
@@ -1114,8 +1111,12 @@ const cancel = () => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-state p {
@@ -1187,7 +1188,9 @@ const cancel = () => {
   transition: color 0.3s ease;
 }
 
-.form-input, .form-textarea, select.form-input {
+.form-input,
+.form-textarea,
+select.form-input {
   width: 100%;
   padding: 12px 12px 12px 44px;
   border: 1.5px solid #e5e7eb;
@@ -1221,7 +1224,9 @@ select.form-input {
   pointer-events: none;
 }
 
-.form-input:focus, .form-textarea:focus, select.form-input:focus {
+.form-input:focus,
+.form-textarea:focus,
+select.form-input:focus {
   outline: none;
   border-color: #7c3aed;
   background: rgba(255, 255, 255, 0.95);
@@ -1336,7 +1341,7 @@ select.form-input:focus ~ .input-underline {
 
 .toggle-slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 20px;
   width: 20px;
   left: 4px;
@@ -1519,25 +1524,25 @@ select.form-input:focus ~ .input-underline {
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .toggle-container {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .action-btn {
     justify-content: center;
   }
-  
+
   .card-content {
     padding: 20px;
   }
@@ -1547,13 +1552,13 @@ select.form-input:focus ~ .input-underline {
   .page-header {
     padding: 20px;
   }
-  
+
   .title-section {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  
+
   .preview-prices {
     flex-direction: column;
     align-items: flex-start;

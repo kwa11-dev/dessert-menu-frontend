@@ -49,13 +49,15 @@ const filteredItems = computed(() => {
 })
 
 const getCategoryImage = (img) =>
-  img ? `${baseURL}/images/categories/${img}` : `${baseURL}/images/categories/default.png`
+  img
+    ? `${baseURL}/storage/images/categories/${img}`
+    : `${baseURL}/storage/images/categories/default.png`
 
 const getItemImage = (img) =>
-  img ? `${baseURL}/images/items/${img}` : `${baseURL}/images/items/default.png`
+  img ? `${baseURL}/storage/images/items/${img}` : `${baseURL}/storage/images/items/default.png`
 
 const onImageError = (event) => {
-  event.target.src = `${baseURL}/images/items/default.png`
+  event.target.src = `${baseURL}/storage/images/items/default.png`
 }
 
 const responsiveOptions = ref([
