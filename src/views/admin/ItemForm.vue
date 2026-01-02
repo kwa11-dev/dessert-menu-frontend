@@ -596,10 +596,10 @@ const cancel = () => {
             <div class="preview-title">Price Preview</div>
             <div class="preview-prices">
               <div class="regular-price" :class="{ 'on-sale': item.is_sale }">
-                ${{ item.price.toFixed(2) }}
+                L.L{{ item.price.toFixed(2) }}
               </div>
               <div v-if="item.is_sale && item.sale_price > 0" class="sale-price">
-                ${{ item.sale_price.toFixed(2) }}
+                L.L{{ item.sale_price.toFixed(2) }}
                 <div class="discount-badge">
                   -{{ ((1 - item.sale_price / item.price) * 100).toFixed(0) }}%
                 </div>
