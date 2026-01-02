@@ -193,7 +193,6 @@ const dynamicFontSize = (name) => {
           :numScroll="1"
           :responsiveOptions="responsiveOptions"
           :autoplayInterval="0"
-          circular
           :showNavigators="true"
           :showIndicators="false"
         >
