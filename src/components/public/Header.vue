@@ -1,45 +1,42 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
 // Static assets
-const wallpaper = new URL('@/assets/wallpaper.jpeg', import.meta.url).href;
-const logo = new URL('@/assets/logo.png', import.meta.url).href;
+const wallpaper = new URL('@/assets/wallpaper-new.jpeg', import.meta.url).href
+const logo = new URL('@/assets/logo.png', import.meta.url).href
 
 // Title & subtitle
-const title = "Pate Cream";
-const subtitle = "Ice Cream And Desserts";
+const title = 'Pate Cream'
+const subtitle = 'Ice Cream And Desserts'
 
 // Social links (fetched from API)
 const socials = ref([
-  { icon: "pi pi-facebook", url: "#" },
-  { icon: "pi pi-instagram", url: "#" },
-  { icon: "pi pi-whatsapp", url: "#" }
-]);
+  { icon: 'pi pi-facebook', url: '#' },
+  { icon: 'pi pi-instagram', url: '#' },
+  { icon: 'pi pi-whatsapp', url: '#' },
+])
 
 // Fetch social URLs from API on mount
 onMounted(async () => {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/menu-constants`);
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/menu-constants`)
 
     socials.value = [
-      { icon: "pi pi-facebook", url: response.data.facebook_url || "#" },
-      { icon: "pi pi-instagram", url: response.data.instagram_url || "#" },
-      { icon: "pi pi-whatsapp", url: response.data.whatsapp_url || "#" }
-    ];
+      { icon: 'pi pi-facebook', url: response.data.facebook_url || '#' },
+      { icon: 'pi pi-instagram', url: response.data.instagram_url || '#' },
+      { icon: 'pi pi-whatsapp', url: response.data.whatsapp_url || '#' },
+    ]
   } catch (error) {
-    console.error("Failed to fetch social URLs:", error);
+    console.error('Failed to fetch social URLs:', error)
   }
-});
+})
 </script>
 
 <template>
   <div class="header">
     <!-- Wallpaper -->
-    <div 
-      class="wallpaper"
-      :style="{ backgroundImage: `url(${wallpaper})` }"
-    ></div>
+    <div class="wallpaper" :style="{ backgroundImage: `url(${wallpaper})` }"></div>
 
     <!-- Logo overlapping wallpaper -->
     <div class="logo-container">
@@ -56,11 +53,11 @@ onMounted(async () => {
 
     <!-- Social Icons -->
     <div class="socials flex justify-center mt-4 gap-4">
-      <a 
-        v-for="(social, index) in socials" 
-        :key="index" 
-        :href="social.url" 
-        target="_blank" 
+      <a
+        v-for="(social, index) in socials"
+        :key="index"
+        :href="social.url"
+        target="_blank"
         rel="noopener"
         class="icon-link"
       >
@@ -93,7 +90,6 @@ onMounted(async () => {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  border: 5px solid white;
   background: white;
   object-fit: cover;
 }
@@ -107,7 +103,7 @@ onMounted(async () => {
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 0.85rem;
   color: #444;
   margin: 0;
   margin-bottom: 1rem;

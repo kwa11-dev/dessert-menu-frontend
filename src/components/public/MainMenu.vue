@@ -169,6 +169,18 @@ const getPriceDisplay = (item) => {
     sale: null,
   }
 }
+
+const dynamicFontSize = (name) => {
+    const baseSize = 10; // default font-size in px
+    const maxLength = 20; // number of characters before shrinking
+    const minSize = 14; // smallest font size in px
+
+    if (!name) return baseSize;
+
+    // Shrink font proportionally if name is longer than maxLength
+    const size = baseSize - (name.length - maxLength);
+    return size < minSize ? minSize : size;
+  }
 </script>
 
 <template>
@@ -258,7 +270,9 @@ const getPriceDisplay = (item) => {
               />
             </div>
             <div class="item-info">
-              <div class="item-name">{{ item.name }}</div>
+          <div class="item-name" :style="{ fontSize: dynamicFontSize(item.name) + 'px' }">
+            {{ item.name }}
+          </div>
               <div class="item-price">
                 <template v-if="getPriceDisplay(item).sale">
                   <span class="original-price">{{ getPriceDisplay(item).original }}</span>
@@ -283,7 +297,7 @@ const getPriceDisplay = (item) => {
       :modal="true"
       :closable="false"
       @hide="closeItemDialog"
-      style="background: #053a39; border-radius: 5%; padding: 1rem"
+      style="background-color: #3c8280; border-radius: 5%; padding: 1rem"
     >
       <template #header>
         <button class="dialog-close-btn" @click="closeItemDialog">
@@ -303,13 +317,13 @@ const getPriceDisplay = (item) => {
         <div class="dialog-details">
           <div class="item-info">
             <div class="info-row flex justify-center">
-              <span class="dialog-title">{{ selectedItem.name }}</span>
+              <div class="dialog-title">{{ selectedItem.name }}</div>
             </div>
             <div class="info-row flex justify-center">
               <span class="info-value description">{{ selectedItem.description }}</span>
             </div>
             <div class="info-row flex justify-center">
-              <span class="info-value price">{{ selectedItem.price }} L.L</span>
+              <span class="info-value price">{{ formatPrice(selectedItem.price) }}</span>
             </div>
           </div>
         </div>
@@ -351,13 +365,11 @@ const getPriceDisplay = (item) => {
 }
 
 .category-card:hover {
-  transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .category-card.active {
   background-color: #053a39;
-  transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
@@ -518,7 +530,7 @@ const getPriceDisplay = (item) => {
   border-radius: 20px;
   width: 100%;
   max-width: 280px;
-  height: 320px;
+  height: 280px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -566,9 +578,7 @@ const getPriceDisplay = (item) => {
 .item-name {
   color: #fff1fb;
   font-weight: bold;
-  font-size: 16px;
   line-height: 1.3;
-  margin-bottom: 8px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
@@ -667,9 +677,8 @@ const getPriceDisplay = (item) => {
 .dialog-title {
   color: #fff1fb;
   font-weight: bold;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1.3;
-  margin-bottom: 8px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
@@ -679,7 +688,7 @@ const getPriceDisplay = (item) => {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 .info-value.price {
-  color: #fff1fb;
+  color: #053a39;
   font-weight: bold;
   font-size: 24px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
@@ -744,7 +753,7 @@ const getPriceDisplay = (item) => {
 
   .item-card {
     max-width: 240px;
-    height: 300px;
+    height: 270px;
   }
 
   .item-image-container {
@@ -761,7 +770,6 @@ const getPriceDisplay = (item) => {
 
   .item-card {
     max-width: 280px;
-    height: 320px;
   }
 
   .item-image-container {
@@ -798,7 +806,6 @@ const getPriceDisplay = (item) => {
 
   .item-card {
     max-width: 220px;
-    height: 280px;
   }
 
   .item-image-container {
@@ -834,7 +841,6 @@ const getPriceDisplay = (item) => {
 
   .item-card {
     max-width: 280px;
-    height: 300px;
   }
 
   .item-image-container {
@@ -877,7 +883,6 @@ const getPriceDisplay = (item) => {
 @media (max-width: 400px) {
   .item-card {
     max-width: 240px;
-    height: 280px;
   }
 
   .item-image-container {
